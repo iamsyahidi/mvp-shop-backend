@@ -1,3 +1,3 @@
-module synapsis/mvp-shop-backend
+module mvp-shop-backend
 
-go 1.22.3
+go 1.21.10
