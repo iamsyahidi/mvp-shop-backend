@@ -10,6 +10,24 @@ definitions:
     - email
     - password
     type: object
+  models.CartRegister:
+    properties:
+      amount:
+        type: number
+      customer_id:
+        type: string
+      price:
+        type: number
+      product_id:
+        type: string
+      qty:
+        type: number
+      status:
+        $ref: '#/definitions/models.Status'
+    required:
+    - customer_id
+    - product_id
+    type: object
   models.CustomerRegister:
     properties:
       email:
@@ -34,6 +52,28 @@ definitions:
         $ref: '#/definitions/models.Status'
       updated_by:
         type: string
+    type: object
+  models.OrderProduct:
+    properties:
+      product_id:
+        type: string
+      qty:
+        type: number
+    required:
+    - product_id
+    - qty
+    type: object
+  models.OrderRegister:
+    properties:
+      payment:
+        type: boolean
+      products:
+        items:
+          $ref: '#/definitions/models.OrderProduct'
+        type: array
+    required:
+    - payment
+    - products
     type: object
   models.ProductCategoryRegister:
     properties:
@@ -149,6 +189,101 @@ paths:
       summary: Login a customer
       tags:
       - auth
+  /carts:
+    post:
+      consumes:
+      - application/json
+      description: Create a cart
+      parameters:
+      - description: Cart
+        in: body
+        name: cart
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartRegister'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a cart
+      tags:
+      - carts
+  /carts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a cart
+      parameters:
+      - description: Cart ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a cart
+      tags:
+      - carts
+    get:
+      consumes:
+      - application/json
+      description: Get a cart by id
+      parameters:
+      - description: Cart ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a cart by id
+      tags:
+      - carts
   /customers:
     get:
       consumes:
@@ -309,6 +444,40 @@ paths:
       summary: Update a customer
       tags:
       - customers
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new order
+      parameters:
+      - description: Order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.OrderRegister'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create an order
+      tags:
+      - orders
   /products:
     get:
       consumes:
