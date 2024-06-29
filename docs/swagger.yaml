@@ -35,6 +35,63 @@ definitions:
       updated_by:
         type: string
     type: object
+  models.ProductCategoryRegister:
+    properties:
+      name:
+        minLength: 3
+        type: string
+      status:
+        $ref: '#/definitions/models.Status'
+    required:
+    - name
+    type: object
+  models.ProductCategoryUpdate:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/models.Status'
+      updated_by:
+        type: string
+    type: object
+  models.ProductRegister:
+    properties:
+      category_id:
+        type: string
+      name:
+        minLength: 3
+        type: string
+      price:
+        type: number
+      status:
+        $ref: '#/definitions/models.Status'
+      stock:
+        type: number
+    required:
+    - category_id
+    - name
+    - price
+    - stock
+    type: object
+  models.ProductUpdate:
+    properties:
+      category_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      status:
+        $ref: '#/definitions/models.Status'
+      stock:
+        type: number
+      updated_by:
+        type: string
+    type: object
   models.Response:
     properties:
       code:
@@ -252,6 +309,286 @@ paths:
       summary: Update a customer
       tags:
       - customers
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: List a product
+      parameters:
+      - collectionFormat: multi
+        description: string collection
+        in: query
+        items:
+          type: string
+        name: collection
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: List a product
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a product
+      parameters:
+      - description: Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductRegister'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get a product by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a product by id
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update a product
+      parameters:
+      - description: Product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Update a product
+      tags:
+      - products
+  /products/categories:
+    get:
+      consumes:
+      - application/json
+      description: List a productCategory
+      parameters:
+      - collectionFormat: multi
+        description: string collection
+        in: query
+        items:
+          type: string
+        name: collection
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: List a productCategory
+      tags:
+      - productCategories
+    post:
+      consumes:
+      - application/json
+      description: Create a productCategory
+      parameters:
+      - description: ProductCategory
+        in: body
+        name: productCategory
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCategoryRegister'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Create a productCategory
+      tags:
+      - productCategories
+  /products/categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a productCategory
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a productCategory
+      tags:
+      - productCategories
+    get:
+      consumes:
+      - application/json
+      description: Get a productCategory by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get a productCategory by id
+      tags:
+      - productCategories
+    put:
+      consumes:
+      - application/json
+      description: Update a productCategory
+      parameters:
+      - description: ProductCategory
+        in: body
+        name: productCategory
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCategoryUpdate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Response'
+        "302":
+          description: Found
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: Update a productCategory
+      tags:
+      - productCategories
 schemes:
 - http
 securityDefinitions:
