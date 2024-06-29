@@ -47,16 +47,22 @@ func main() {
 
 	// Repositories
 	customerRepository := repositories.NewCustomerRepository(db)
+	productCategoryRepository := repositories.NewProductCategoryRepository(db)
+	productRepository := repositories.NewProductRepository(db)
 
 	// Services
 	customerService := services.NewCustomerService(customerRepository)
 	authService := services.NewAuthService(customerRepository)
+	productCategoryService := services.NewProductCategoryService(productCategoryRepository)
+	productService := services.NewProductService(productRepository)
 
 	// Controllers
 	customerController := controllers.NewCustomerController(customerService)
 	authController := controllers.NewAuthController(authService)
+	productCategoryController := controllers.NewProductCategoryController(productCategoryService)
+	productController := controllers.NewProductController(productService)
 
-	router := routes.NewRouter(customerController, authController)
+	router := routes.NewRouter(customerController, authController, productCategoryController, productController)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
