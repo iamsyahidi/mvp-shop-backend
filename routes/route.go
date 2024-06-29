@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(customerController controllers.CustomerControllerInterface, authController controllers.AuthControllerInterface, productCategoryController controllers.ProductCategoryControllerInterface, productController controllers.ProductControllerInterface) *gin.Engine {
+func NewRouter(customerController controllers.CustomerControllerInterface, authController controllers.AuthControllerInterface, productCategoryController controllers.ProductCategoryControllerInterface, productController controllers.ProductControllerInterface, cartController controllers.CartControllerInterface) *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
 	baseRouter := router.Group("/v1")
@@ -45,6 +45,13 @@ func NewRouter(customerController controllers.CustomerControllerInterface, authC
 	productsWithAuth.GET("/:id", productController.GetProductById)
 	productsWithAuth.PUT("/:id", productController.UpdateProduct)
 	productsWithAuth.DELETE("/:id", productController.DeleteProduct)
+
+	//* carts
+	cartsWithAuth := baseRouter.Group("/carts")
+	cartsWithAuth.Use(middleware.AuthMiddleware())
+	cartsWithAuth.POST("", cartController.CreateCart)
+	cartsWithAuth.GET("", cartController.GetCartByCustomerID)
+	cartsWithAuth.DELETE("/:id", cartController.DeleteCart)
 
 	return router
 }
