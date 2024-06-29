@@ -50,6 +50,7 @@ func main() {
 	productCategoryRepository := repositories.NewProductCategoryRepository(db)
 	productRepository := repositories.NewProductRepository(db)
 	cartRepository := repositories.NewCartRepository(db)
+	orderRepository := repositories.NewOrderRepository(db)
 
 	// Services
 	customerService := services.NewCustomerService(customerRepository)
@@ -57,6 +58,7 @@ func main() {
 	productCategoryService := services.NewProductCategoryService(productCategoryRepository)
 	productService := services.NewProductService(productRepository)
 	cartService := services.NewCartService(cartRepository)
+	orderService := services.NewOrderService(orderRepository, productRepository)
 
 	// Controllers
 	customerController := controllers.NewCustomerController(customerService)
@@ -64,8 +66,9 @@ func main() {
 	productCategoryController := controllers.NewProductCategoryController(productCategoryService)
 	productController := controllers.NewProductController(productService)
 	cartController := controllers.NewCartController(cartService)
+	orderController := controllers.NewOrderController(orderService)
 
-	router := routes.NewRouter(customerController, authController, productCategoryController, productController, cartController)
+	router := routes.NewRouter(customerController, authController, productCategoryController, productController, cartController, orderController)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
