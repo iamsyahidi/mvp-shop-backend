@@ -7,7 +7,7 @@ import (
 )
 
 type Customer struct {
-	ID        string     `json:"id" gorm:"primary_key;not null;type:varchar(100);index"`
+	ID        string     `json:"id" gorm:"primary_key;not null;type:varchar(36);index"`
 	Email     string     `json:"email" gorm:"not null;type:varchar(100);index"`
 	Name      string     `json:"name" gorm:"not null;type:varchar(250);index"`
 	Password  string     `json:"password,omitempty" gorm:"type:varchar(150);index"`
@@ -19,7 +19,7 @@ type Customer struct {
 }
 
 func (Customer) TableName() string {
-	return "customer"
+	return "customers"
 }
 
 type CustomerRegister struct {
