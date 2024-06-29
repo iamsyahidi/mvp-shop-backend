@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"mvp-shop-backend/models"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -29,7 +30,11 @@ func InitGorm(ctx context.Context) (db *gorm.DB, err error) {
 	}
 
 	//TODO add other db/model migrate
-	db.AutoMigrate()
+	db.AutoMigrate(
+		&models.Customer{},
+		&models.ProductCategory{},
+		&models.Product{},
+	)
 
 	return db, nil
 }
