@@ -50,3 +50,26 @@ CREATE INDEX IF NOT EXISTS idx_products_name ON public.products USING btree ("na
 CREATE INDEX IF NOT EXISTS idx_products_price ON public.products USING btree (price);
 CREATE INDEX IF NOT EXISTS idx_products_stock ON public.products USING btree (stock);
 CREATE INDEX IF NOT EXISTS idx_products_status ON public.products USING btree ("status");
+
+CREATE TABLE IF NOT EXISTS public.carts (
+	id varchar(36) NOT NULL,
+    customer_id varchar(36) NOT NULL,
+    product_id varchar(36) NOT NULL,
+    qty integer NULL,
+    price numeric NULL,
+	amount numeric NULL,
+	"status" varchar(10) NOT NULL,
+	created_at timestamptz DEFAULT now() NOT NULL,
+	created_by varchar(150) NOT NULL,
+	updated_at timestamptz NULL,
+	updated_by varchar(150) DEFAULT NULL::character varying NULL,
+   	CONSTRAINT carts_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_carts_id ON public.carts USING btree (id);
+CREATE INDEX IF NOT EXISTS idx_carts_customer_id ON public.carts USING btree (customer_id);
+CREATE INDEX IF NOT EXISTS idx_carts_product_id ON public.carts USING btree (product_id);
+
+
+
+
