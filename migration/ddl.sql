@@ -70,6 +70,44 @@ CREATE INDEX IF NOT EXISTS idx_carts_id ON public.carts USING btree (id);
 CREATE INDEX IF NOT EXISTS idx_carts_customer_id ON public.carts USING btree (customer_id);
 CREATE INDEX IF NOT EXISTS idx_carts_product_id ON public.carts USING btree (product_id);
 
+CREATE TABLE IF NOT EXISTS public."order" (
+	invoice varchar(100) NOT NULL,
+	customer_id varchar(100) NOT NULL,
+	amount numeric NULL,
+	payment bool DEFAULT false NOT NULL,
+	"status" varchar(10) NOT NULL,
+	created_at timestamptz DEFAULT now() NOT NULL,
+	created_by varchar(150) NOT NULL,
+	updated_at timestamptz NULL,
+	updated_by varchar(150) DEFAULT NULL::character varying NULL,
+	CONSTRAINT order_pkey PRIMARY KEY (invoice)
+);
+CREATE INDEX IF NOT EXISTS idx_order_amount ON public."order" USING btree (amount);
+CREATE INDEX IF NOT EXISTS idx_order_invoice ON public."order" USING btree (invoice);
+CREATE INDEX IF NOT EXISTS idx_order_payment ON public."order" USING btree (payment);
+CREATE INDEX IF NOT EXISTS idx_order_status ON public."order" USING btree ("status");
+CREATE INDEX IF NOT EXISTS idx_order_customer_id ON public."order" USING btree (customer_id);
+
+
+CREATE TABLE IF NOT EXISTS public.order_detail (
+	invoice varchar(100) NOT NULL,
+	product_id varchar(100) NOT NULL,
+	qty numeric NULL,
+	price numeric NULL,
+	amount numeric NULL,
+	"status" varchar(10) NOT NULL,
+	created_at timestamptz DEFAULT now() NOT NULL,
+	created_by varchar(150) NOT NULL,
+	updated_at timestamptz NULL,
+	updated_by varchar(150) DEFAULT NULL::character varying NULL
+);
+CREATE INDEX IF NOT EXISTS idx_order_detail_amount ON public.order_detail USING btree (amount);
+CREATE INDEX IF NOT EXISTS idx_order_detail_invoice ON public.order_detail USING btree (invoice);
+CREATE INDEX IF NOT EXISTS idx_order_detail_price ON public.order_detail USING btree (price);
+CREATE INDEX IF NOT EXISTS idx_order_detail_product_id ON public.order_detail USING btree (product_id);
+CREATE INDEX IF NOT EXISTS idx_order_detail_qty ON public.order_detail USING btree (qty);
+CREATE INDEX IF NOT EXISTS idx_order_detail_status ON public.order_detail USING btree ("status");
+
 
 
 
