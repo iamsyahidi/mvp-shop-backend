@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(customerController controllers.CustomerControllerInterface, authController controllers.AuthControllerInterface) *gin.Engine {
+func NewRouter(customerController controllers.CustomerControllerInterface, authController controllers.AuthControllerInterface, productCategoryController controllers.ProductCategoryControllerInterface, productController controllers.ProductControllerInterface) *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
 	baseRouter := router.Group("/v1")
@@ -25,6 +25,26 @@ func NewRouter(customerController controllers.CustomerControllerInterface, authC
 	//* auth
 	auth := baseRouter.Group("/auth")
 	auth.POST("/login", authController.Login)
+
+	//* products/categories
+	productCategories := baseRouter.Group("/products/categories")
+	productCategories.POST("", productCategoryController.CreateProductCategory)
+	productCategoriesWithAuth := baseRouter.Group("/products/categories")
+	productCategoriesWithAuth.Use(middleware.AuthMiddleware())
+	productCategoriesWithAuth.GET("", productCategoryController.GetProductCategories)
+	productCategoriesWithAuth.GET("/:id", productCategoryController.GetProductCategoryById)
+	productCategoriesWithAuth.PUT("/:id", productCategoryController.UpdateProductCategory)
+	productCategoriesWithAuth.DELETE("/:id", productCategoryController.DeleteProductCategory)
+
+	//* products
+	products := baseRouter.Group("/products")
+	products.POST("", productController.CreateProduct)
+	productsWithAuth := baseRouter.Group("/products")
+	productsWithAuth.Use(middleware.AuthMiddleware())
+	productsWithAuth.GET("", productController.GetProducts)
+	productsWithAuth.GET("/:id", productController.GetProductById)
+	productsWithAuth.PUT("/:id", productController.UpdateProduct)
+	productsWithAuth.DELETE("/:id", productController.DeleteProduct)
 
 	return router
 }
