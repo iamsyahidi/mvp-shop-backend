@@ -34,6 +34,9 @@ func InitGorm(ctx context.Context) (db *gorm.DB, err error) {
 		&models.Customer{},
 		&models.ProductCategory{},
 		&models.Product{},
+		&models.Cart{},
+		&models.Order{},
+		&models.OrderDetail{},
 	)
 
 	return db, nil
