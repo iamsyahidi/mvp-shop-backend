@@ -6,6 +6,7 @@ import (
 	"mvp-shop-backend/pkg/utils"
 	"mvp-shop-backend/repositories"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -30,6 +31,8 @@ func NewCustomerService(customerRepository repositories.CustomerRepositoryInterf
 }
 
 func (cs *customerService) CreateCustomer(customer *models.Customer) (res *models.Response, err error) {
+
+	customer.Email = strings.ToLower(customer.Email)
 	exists, err := cs.customerRepository.GetCustomerByEmail(customer.Email)
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
