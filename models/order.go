@@ -4,7 +4,7 @@ import "time"
 
 type Order struct {
 	Invoice    string     `json:"invoice" gorm:"primary_key;not null;type:varchar(100);index"`
-	CustomerID string     `json:"customer_id" gorm:"not null;type:varchar(100);index"`
+	CustomerID string     `json:"customer_id" gorm:"not null;type:varchar(36);index"`
 	Amount     float64    `json:"amount" gorm:"index"`
 	Payment    bool       `json:"payment" gorm:"not null;index;default:false"`
 	Status     Status     `json:"status" gorm:"not null;type:varchar(10);index"`
@@ -20,7 +20,7 @@ func (Order) TableName() string {
 
 type OrderDetail struct {
 	Invoice   string     `json:"invoice" gorm:"not null;type:varchar(100);index"`
-	ProductID string     `json:"product_id" gorm:"not null;type:varchar(100);index"`
+	ProductID string     `json:"product_id" gorm:"not null;type:varchar(36);index"`
 	Qty       float64    `json:"qty" gorm:"index"`
 	Price     float64    `json:"price" gorm:"index"`
 	Amount    float64    `json:"amount" gorm:"index"`
@@ -32,7 +32,7 @@ type OrderDetail struct {
 }
 
 func (OrderDetail) TableName() string {
-	return "order_detail"
+	return "order_details"
 }
 
 type OrderRegister struct {
