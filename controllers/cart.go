@@ -16,6 +16,7 @@ type cartController struct {
 
 type CartControllerInterface interface {
 	CreateCart(c *gin.Context)
+	UpdateCart(c *gin.Context)
 	GetCartByCustomerID(c *gin.Context)
 	DeleteCart(c *gin.Context)
 }
@@ -118,6 +119,64 @@ func (cc *cartController) GetCartByCustomerID(c *gin.Context) {
 	}
 
 	middleware.Response(c, customer.ID, *response)
+}
+
+// UpdateCart godoc
+// @Summary Update a cart
+// @Description Update a cart
+// @Tags carts
+// @Accept  json
+// @Produce  json
+// @Param cart body models.CartUpdate true "Cart"
+// @Success 201 {object} models.Response
+// @Failure 500 {object} models.Response
+// @Failure 400 {object} models.Response
+// @Failure 302 {object} models.Response
+// @Router /carts/{id} [put]
+func (cc *cartController) UpdateCart(c *gin.Context) {
+	v, ok := c.Get("customer")
+	if !ok {
+		c.JSON(401, models.Response{
+			Code:    http.StatusUnauthorized,
+			Message: http.StatusText(http.StatusUnauthorized),
+		})
+		return
+	}
+
+	id := c.Param("id")
+	if id == "" {
+		middleware.Response(c, id, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: http.StatusText(http.StatusBadRequest),
+			Data:    nil,
+		})
+		return
+	}
+
+	var cartUpdate models.CartUpdate
+	if err := c.ShouldBindJSON(&cartUpdate); err != nil {
+		middleware.Response(c, cartUpdate, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+			Data:    nil,
+		})
+		return
+	}
+
+	cartUpdate.ID = id
+	cartUpdate.UpdatedBy = v.(*models.CustomerClaims).Name
+	response, err := cc.cartService.UpdateCart(&cartUpdate)
+	if err != nil {
+		logger.Err(err.Error())
+		middleware.Response(c, cartUpdate, models.Response{
+			Code:    http.StatusInternalServerError,
+			Message: http.StatusText(http.StatusInternalServerError),
+			Data:    nil,
+		})
+		return
+	}
+
+	middleware.Response(c, cartUpdate, *response)
 }
 
 // DeleteCart godoc
