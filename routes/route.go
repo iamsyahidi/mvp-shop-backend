@@ -51,6 +51,7 @@ func NewRouter(customerController controllers.CustomerControllerInterface, authC
 	cartsWithAuth.Use(middleware.AuthMiddleware())
 	cartsWithAuth.POST("", cartController.CreateCart)
 	cartsWithAuth.GET("", cartController.GetCartByCustomerID)
+	cartsWithAuth.PUT("/:id", cartController.UpdateCart)
 	cartsWithAuth.DELETE("/:id", cartController.DeleteCart)
 
 	//* orders
