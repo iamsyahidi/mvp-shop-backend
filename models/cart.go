@@ -21,7 +21,7 @@ func (Cart) TableName() string {
 }
 
 type CartRegister struct {
-	CustomerID string  `json:"customer_id" binding:"required"`
+	CustomerID string  `json:"customer_id"`
 	ProductID  string  `json:"product_id" binding:"required"`
 	Qty        float64 `json:"qty"`
 	Price      float64 `json:"price"`
