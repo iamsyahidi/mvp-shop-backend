@@ -8,9 +8,9 @@ import (
 
 type Customer struct {
 	ID        string     `json:"id" gorm:"primary_key;not null;type:varchar(36);index"`
-	Email     string     `json:"email" gorm:"not null;type:varchar(100);index"`
+	Email     string     `json:"email" gorm:"unique;not null;type:varchar(100);index"`
 	Name      string     `json:"name" gorm:"not null;type:varchar(250);index"`
-	Password  string     `json:"password,omitempty" gorm:"type:varchar(150);index"`
+	Password  string     `json:"password" gorm:"not null;type:varchar(150);index"`
 	Status    Status     `json:"status" gorm:"not null;type:varchar(10);index"`
 	CreatedAt time.Time  `json:"created_at" gorm:"not null;default:now()"`
 	CreatedBy string     `json:"created_by" gorm:"not null;type:varchar(150)"`
