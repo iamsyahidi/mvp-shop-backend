@@ -15,7 +15,7 @@ type productRepository struct {
 type ProductRepositoryInterface interface {
 	CreateProduct(product *models.Product) error
 	GetProducts(pagination utils.Pagination, where map[string]string) ([]models.ProductView, int64, error)
-	GetProductById(id string) (models.Product, error)
+	GetProductById(id string) (models.ProductView, error)
 	UpdateProduct(product *models.ProductUpdate) error
 	DeleteProduct(product *models.ProductUpdate) (err error)
 }
@@ -39,39 +39,38 @@ func (pr *productRepository) GetProducts(pagination utils.Pagination, where map[
 	queryBuilder := pr.db.
 		Table("products").Select("products.*, product_categories.name as category_name").
 		Joins("left join product_categories on products.category_id = product_categories.id").
-		Where("products.status <> ?", models.StatusDeleted).
-		Scan(&products)
+		Where("products.status <> ?", models.StatusDeleted)
 
 	if id, ok := where["id"]; ok && id != "" {
-		queryBuilder = queryBuilder.Where("id = ?", id)
+		queryBuilder = queryBuilder.Where(`products.id = ?`, id)
 	}
 
 	if name, ok := where["name"]; ok && name != "" {
 		name := fmt.Sprintf("%%%s%%", name)
-		queryBuilder = queryBuilder.Where(`"name" ILIKE ?`, name)
+		queryBuilder = queryBuilder.Where(`products."name" ILIKE ?`, name)
 	}
 
 	if categoryId, ok := where["category_id"]; ok && categoryId != "" {
-		queryBuilder = queryBuilder.Where(`"category_id" = ?`, categoryId)
+		queryBuilder = queryBuilder.Where(`products.category_id = ?`, categoryId)
 	}
 
 	if categoryName, ok := where["category_name"]; ok && categoryName != "" {
 		categoryName := fmt.Sprintf("%%%s%%", categoryName)
-		queryBuilder = queryBuilder.Where(`"category_name" ILIKE ?`, categoryName)
+		queryBuilder = queryBuilder.Where(`product_categories."name" ILIKE ?`, categoryName)
 	}
 
 	if pagination.SortField != "" {
 		if pagination.SortField == "name" {
-			sortField = `INITCAP("name")`
+			sortField = `INITCAP(products."name")`
 		} else if pagination.SortField == "price" {
-			sortField = "price"
+			sortField = "products.price"
 		} else if pagination.SortField == "stock" {
-			sortField = "stock"
+			sortField = "products.stock"
 		} else {
-			sortField = "created_at"
+			sortField = "products.created_at"
 		}
 	} else {
-		sortField = "created_at"
+		sortField = "products.created_at"
 	}
 
 	if pagination.SortDirection != "" {
@@ -89,7 +88,7 @@ func (pr *productRepository) GetProducts(pagination utils.Pagination, where map[
 	orderBy := fmt.Sprintf("%s %s", sortField, sortDirection)
 	limitBuilder := queryBuilder.Limit(pagination.Limit).Offset(offset).Order(orderBy)
 
-	result := limitBuilder.Find(&products)
+	result := limitBuilder.Scan(&products)
 	if result.Error != nil {
 		return nil, count, result.Error
 	}
@@ -97,9 +96,13 @@ func (pr *productRepository) GetProducts(pagination utils.Pagination, where map[
 	return products, count, nil
 }
 
-func (pr *productRepository) GetProductById(id string) (models.Product, error) {
-	var product models.Product
-	if err := pr.db.Where(&models.Product{ID: id}).First(&product).Error; err != nil {
+func (pr *productRepository) GetProductById(id string) (models.ProductView, error) {
+	var product models.ProductView
+	queryBuilder := pr.db.
+		Table("products").Select("products.*, product_categories.name as category_name").
+		Joins("left join product_categories on products.category_id = product_categories.id").
+		Where("products.status <> ?", models.StatusDeleted)
+	if err := queryBuilder.Where("products.id = ?", id).Scan(&product).Error; err != nil {
 		return product, err
 	}
 	return product, nil
