@@ -16,6 +16,7 @@ type cartService struct {
 type CartServiceInterface interface {
 	CreateCart(cart *models.Cart) (res *models.Response, err error)
 	GetCartByCustomerID(id string) (res *models.Response, err error)
+	UpdateCart(cart *models.CartUpdate) (res *models.Response, err error)
 	DeleteCart(cart *models.CartUpdate) (res *models.Response, err error)
 }
 
@@ -26,8 +27,38 @@ func NewCartService(cartRepository repositories.CartRepositoryInterface) CartSer
 }
 
 func (cs *cartService) CreateCart(cart *models.Cart) (res *models.Response, err error) {
+	if cart.Status == "" {
+		cart.Status = models.StatusActive
+	}
+	exisitingCart, err := cs.cartRepository.GetCartByCustomerIDAndProductID(cart.CustomerID, cart.ProductID)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	if exisitingCart.ID != "" {
+		cart.ID = exisitingCart.ID
+		cart.Qty = exisitingCart.Qty + cart.Qty
+		cart.Amount = cart.Qty * cart.Price
+		err = cs.cartRepository.UpdateCart(&models.CartUpdate{
+			ID:         cart.ID,
+			CustomerID: cart.CustomerID,
+			ProductID:  cart.ProductID,
+			Qty:        cart.Qty,
+			Price:      cart.Price,
+			Amount:     cart.Amount,
+			Status:     cart.Status,
+			UpdatedBy:  cart.CreatedBy,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return &models.Response{
+			Code:    http.StatusOK,
+			Message: "Cart updated successfully",
+		}, nil
+	}
+
 	cart.ID = uuid.New().String()
-	cart.Status = models.StatusActive
+	cart.Amount = cart.Qty * cart.Price
 	err = cs.cartRepository.CreateCart(cart)
 	if err != nil {
 		return nil, err
@@ -37,6 +68,22 @@ func (cs *cartService) CreateCart(cart *models.Cart) (res *models.Response, err 
 		Code:    http.StatusCreated,
 		Message: "Cart created successfully",
 	}, nil
+}
+
+func (cs *cartService) UpdateCart(cart *models.CartUpdate) (res *models.Response, err error) {
+	if cart.Status == "" {
+		cart.Status = models.StatusActive
+	}
+	cart.Amount = cart.Qty * cart.Price
+	err = cs.cartRepository.UpdateCart(cart)
+	if err != nil {
+		return nil, err
+	}
+	return &models.Response{
+		Code:    http.StatusOK,
+		Message: "Cart created successfully",
+	}, nil
+
 }
 
 func (cs *cartService) GetCartByCustomerID(id string) (res *models.Response, err error) {
