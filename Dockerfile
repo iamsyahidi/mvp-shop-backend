@@ -1,29 +1,23 @@
-# Start from golang base image
-FROM golang:alpine
+FROM golang:alpine as builder
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64 
+LABEL maintainer="Ilham Syahidi <ilhamsyahidi66@gmail.com>"
+COPY go.mod go.sum /go/src/mvp-shop-backend/
+WORKDIR /go/src/mvp-shop-backend
+RUN go mod download
+COPY . /go/src/mvp-shop-backend
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o build/mvp-shop-backend mvp-shop-backend
 
-# Install git.
-# Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git && apk add --no-cach bash && apk add build-base
-
-# Setup folders
-RUN mkdir /app
+FROM alpine:latest
+# RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
-
-# Copy the source from the current directory to the working Directory inside the container
-COPY . .
-COPY .env .
-
-# Download all the dependencies
-RUN go get -d -v ./...
-
-# Install the package
-RUN go install -v ./...
-
-# Build the Go app
-RUN go build -o /build
-
-# Expose port 3001 to the outside world
+COPY --from=builder /go/src/mvp-shop-backend/build/mvp-shop-backend .
+COPY --from=builder /go/src/mvp-shop-backend/.env .
+COPY --from=builder /go/src/mvp-shop-backend/docs/ ./docs/
 EXPOSE 3001
+ENTRYPOINT ["/app/mvp-shop-backend"]
 
-# Run the executable
-CMD [ "/build" ]
+
+
