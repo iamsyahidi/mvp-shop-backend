@@ -164,6 +164,56 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "Update a cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "carts"
+                ],
+                "summary": "Update a cart",
+                "parameters": [
+                    {
+                        "description": "Cart",
+                        "name": "cart",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CartUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "302": {
+                        "description": "Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -968,7 +1018,6 @@ const docTemplate = `{
         "models.CartRegister": {
             "type": "object",
             "required": [
-                "customer_id",
                 "product_id"
             ],
             "properties": {
@@ -989,6 +1038,35 @@ const docTemplate = `{
                 },
                 "status": {
                     "$ref": "#/definitions/models.Status"
+                }
+            }
+        },
+        "models.CartUpdate": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "status": {
+                    "$ref": "#/definitions/models.Status"
+                },
+                "updated_by": {
+                    "type": "string"
                 }
             }
         },
