@@ -25,7 +25,7 @@ func GenerateToken(customer models.CustomerClaims) (string, error) {
 	claims := models.CustomerClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiredAt,
-			Issuer:    "dbo-is-backend",
+			Issuer:    "mvp-shop-backend",
 			Subject:   "customer",
 		},
 		ID:     customer.ID,
