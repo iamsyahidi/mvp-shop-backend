@@ -50,9 +50,11 @@ func (pc *productController) CreateProduct(c *gin.Context) {
 	}
 
 	product := models.Product{
-		Name:  productRegister.Name,
-		Price: productRegister.Price,
-		Stock: productRegister.Stock,
+		Name:       productRegister.Name,
+		Price:      productRegister.Price,
+		Stock:      productRegister.Stock,
+		CategoryID: productRegister.CategoryID,
+		Status:     productRegister.Status,
 	}
 
 	response, err := pc.productService.CreateProduct(&product)
