@@ -1,39 +1,67 @@
 # Go Restful API with Gin, GORM - MVP Shop
 
-Any feedback and pull requests are welcome and highly appreciated. Feel free to open issues just for comments and discussions.
+Welcome to the **MVP Shop** project! This repository contains a fully functional RESTful API for an online shop, built with Go, Gin, and GORM. We appreciate any feedback and contributions. Feel free to open issues for comments and discussions.
+
+## Table of Contents
+
+- [Features](#features)
+- [Schema Design](#schema-design)
+- [Getting Started](#getting-started)
+  - [Local Setup](#local-setup)
+- [API Documentation](#api-documentation)
 
 ## Features
 
-The following feature is to fulfill the criteria in mvp constraint :
+This project includes the following features to meet the MVP criteria:
 
-- Customer can view product list by product category
-- Customer can add product to shopping cart
-- Customer can see a list of products that have been added to the shopping cart
-- Customer can delete product list in shopping cart
-- Customer can checkout and make payment transactions
-- Login and register customer
+- **Product Management**:
+  - View product list by category
+  - Add products to the shopping cart
+  - View items in the shopping cart
+  - Remove items from the shopping cart
+  - Checkout and process payment transactions
 
-additional :
-- Migrate with gorm for creating our schemas on app start
-- Jwt Authorization Header
-- Logrus for custom internal error/info
+- **User Authentication**:
+  - Customer login and registration
+  - JWT-based authorization
 
-## Schema design
+- **Database and Logging**:
+  - Automatic schema migration using GORM
+  - Custom error and info logging with Logrus
 
-Please visit [wiki](./migration/wiki/) 
+## Schema Design
 
-## Start Application
+For detailed schema design, please visit our [Wiki](./migration/wiki/).
 
-- Clone and change into this repository
+## Getting Started
 
-### Local
+Follow these steps to set up and run the application:
 
-- Create a postgres database and set environment variables for your database following the example env file
-- Run the application with command : `go run main.go`
-- or Run via docker compose : `docker-compose up -d --build --force-recreate`
-- (optional) to update swagger docs : `go install github.com/swaggo/swag/cmd/swag@latest && swag init`
+### Local Setup
 
-## API documentations/collections
-
-Please visit [postman](https://documenter.getpostman.com/view/11257503/2sA3dviBtA)
-or visit [swagger](http://localhost:3001/swagger/index.html)
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/yourusername/mvp-shop.git
+   cd mvp-shop
+   ```
+2. **Database Setup**:
+   - Create a PostgreSQL database.
+   - Set environment variables for your database as shown in the .env.example file.
+3. **Run the Application**:
+   - Directly with Go:
+   ```bash
+   go run main.go
+   ```
+   - Using Docker Compose:
+   ```bash
+   docker-compose up -d --build --force-recreate
+   ```
+4. *(Optional)* Update Swagger Documentation:
+   ```bash
+   go install github.com/swaggo/swag/cmd/swag@latest && swag init
+   ```
+   
+## Api Documentation
+Access the comprehensive API documentation through the following links:
+- [Postman Collection](https://documenter.getpostman.com/view/11257503/2sA3dviBtA)
+- [Swagger UI](http://localhost:3001/swagger/index.html)
